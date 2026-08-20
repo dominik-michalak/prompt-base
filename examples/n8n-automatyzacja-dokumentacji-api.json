@@ -1,0 +1,137 @@
+{
+  "name": "Automatyzacja dokumentacji API z commitów",
+  "nodes": [
+    {
+      "id": "1",
+      "name": "GitHub Trigger (push)",
+      "type": "n8n-nodes-base.githubTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "parameters": {
+        "owner": "twoj-login",
+        "repository": "nazwa-repo",
+        "events": ["push"]
+      },
+      "notes": "Uruchamia workflow przy każdym pushu do gałęzi głównej. W wersji demo można zamienić na Manual Trigger."
+    },
+    {
+      "id": "2",
+      "name": "Filtruj: tylko pliki tras/kontrolerów",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "// Bierze listę zmienionych plików z payloadu GitHub Trigger\n// i przepuszcza dalej tylko te, które faktycznie definiują endpointy API\nconst commits = $input.first().json.commits || [];\nconst wzorzec = /routes\\/|controllers\\/|api\\//i;\n\nconst zmienionePliki = new Set();\nfor (const commit of commits) {\n  (commit.added || []).forEach(f => zmienionePliki.add(f));\n  (commit.modified || []).forEach(f => zmienionePliki.add(f));\n}\n\nconst istotne = [...zmienionePliki].filter(f => wzorzec.test(f));\n\nif (istotne.length === 0) {\n  // Nic istotnego się nie zmieniło — zatrzymaj workflow, nie generuj dokumentacji na próżno\n  return [];\n}\n\nreturn istotne.map(plik => ({ json: { plik } }));"
+      },
+      "notes": "Kluczowy krok jakościowy: bez tego filtra AI dostawałoby do analizy KAŻDY commit (także zmiany w CSS czy README), co marnuje wywołania API i psuje trafność dokumentacji."
+    },
+    {
+      "id": "3",
+      "name": "Pobierz zawartość pliku (GitHub)",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [440, 0],
+      "parameters": {
+        "resource": "file",
+        "operation": "get",
+        "owner": "twoj-login",
+        "repository": "nazwa-repo",
+        "filePath": "={{$json.plik}}"
+      },
+      "notes": "Pobiera aktualną (po commicie) zawartość zmienionego pliku z endpointami, żeby AI dokumentowało stan po zmianie, nie diff."
+    },
+    {
+      "id": "4",
+      "name": "Wygeneruj dokumentację (AI)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [660, 0],
+      "parameters": {
+        "resource": "chat",
+        "model": "gpt-4o",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "Jesteś generatorem dokumentacji API. Odpowiadasz WYŁĄCZNIE poprawnym Markdownem, bez komentarzy poza treścią dokumentacji."
+            },
+            {
+              "role": "user",
+              "content": "Udokumentuj poniższe endpointy API w spójnym formacie.\n\nKod / lista endpointów:\n{{$json.content}}\n\nDla każdego endpointu podaj:\n- Metoda i ścieżka\n- Opis (jedno zdanie, po co ten endpoint istnieje, nie tylko co robi)\n- Parametry / body: tabela nazwa | typ | wymagany | opis\n- Przykładowe żądanie (JSON)\n- Przykładowa odpowiedź sukcesu (JSON + kod statusu)\n- Możliwe błędy: kody statusu + kiedy występują\n- Wymagana autoryzacja: tak/nie + poziom uprawnień\n\nNa końcu dodaj tabelę zbiorczą wszystkich endpointów jako szybki spis treści."
+            }
+          ]
+        }
+      },
+      "notes": "To jest dokładnie prompt z prompts/dokumentacja/dokumentacja-api.md — ten sam plik markdown jest tu 'wklejony' jako treść wiadomości. Baza promptów i ten workflow używają jednego, wspólnego źródła prawdy."
+    },
+    {
+      "id": "5",
+      "name": "Waliduj i sformatuj wynik",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0],
+      "parameters": {
+        "language": "javaScript",
+        "jsCode": "// Prosta walidacja: czy AI faktycznie zwróciło markdown z nagłówkami,\n// a nie np. przeprosiny albo pustą odpowiedź.\nconst tresc = $json.message?.content || $json.text || '';\n\nif (!tresc.includes('#') || tresc.length < 50) {\n  throw new Error('Wygenerowana dokumentacja wygląda podejrzanie krótko/niepoprawnie — zatrzymuję workflow zamiast commitować śmieci.');\n}\n\nreturn [{ json: { dokumentacja: tresc, plikZrodlowy: $('Filtruj: tylko pliki tras/kontrolerów').item.json.plik } }];"
+      },
+      "notes": "To jest node z Metodologii projektu: 'walidacja przed commitem' — zabezpieczenie przed automatycznym zapisaniem halucynacji do repozytorium bez nadzoru człowieka."
+    },
+    {
+      "id": "6",
+      "name": "Zapisz docs/API.md (commit)",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [1100, 0],
+      "parameters": {
+        "resource": "file",
+        "operation": "edit",
+        "owner": "twoj-login",
+        "repository": "nazwa-repo",
+        "filePath": "docs/API.md",
+        "fileContent": "={{$json.dokumentacja}}",
+        "commitMessage": "docs: automatyczna aktualizacja dokumentacji API ({{$json.plikZrodlowy}})",
+        "branch": "docs/auto-api-update"
+      },
+      "notes": "Commit idzie na osobną gałąź, nie prosto na main — świadome ograniczenie automatyzacji, patrz punkt 3 w opisie workflow (human-in-the-loop przez PR)."
+    },
+    {
+      "id": "7",
+      "name": "Powiadom zespół (Slack)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [1320, 0],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "channel": "#dev-docs",
+        "text": "📄 Dokumentacja API zaktualizowana automatycznie na podstawie ostatniego commita ({{$json.plikZrodlowy}}). Sprawdź i zmerguj gałąź docs/auto-api-update."
+      },
+      "notes": "Powiadomienie zamiast cichej automatyzacji — zespół zawsze wie, że coś się zmieniło i musi to zatwierdzić."
+    }
+  ],
+  "connections": {
+    "GitHub Trigger (push)": {
+      "main": [[{ "node": "Filtruj: tylko pliki tras/kontrolerów", "type": "main", "index": 0 }]]
+    },
+    "Filtruj: tylko pliki tras/kontrolerów": {
+      "main": [[{ "node": "Pobierz zawartość pliku (GitHub)", "type": "main", "index": 0 }]]
+    },
+    "Pobierz zawartość pliku (GitHub)": {
+      "main": [[{ "node": "Wygeneruj dokumentację (AI)", "type": "main", "index": 0 }]]
+    },
+    "Wygeneruj dokumentację (AI)": {
+      "main": [[{ "node": "Waliduj i sformatuj wynik", "type": "main", "index": 0 }]]
+    },
+    "Waliduj i sformatuj wynik": {
+      "main": [[{ "node": "Zapisz docs/API.md (commit)", "type": "main", "index": 0 }]]
+    },
+    "Zapisz docs/API.md (commit)": {
+      "main": [[{ "node": "Powiadom zespół (Slack)", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
