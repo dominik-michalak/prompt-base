@@ -1,113 +1,117 @@
-# 🗂️ Baza wiedzy z promptami — Prompt Knowledge Base
+# 🗂️ Prompt Knowledge Base
 
-Uporządkowany, wersjonowany katalog przemyślanych promptów do pracy i nauki. Każdy prompt ma
-jasno określony cel, gotowy do skopiowania szablon, sparametryzowane zmienne wejściowe, sprawdzony
-przykład działania i wyjaśnienie decyzji projektowych stojących za jego konstrukcją.
+A structured, version-controlled catalog of well-thought-out prompts for work and learning. Each
+prompt has a clearly defined purpose, a ready-to-copy template, parameterized input variables, a
+tested usage example, and an explanation of the design decisions behind it.
 
-To repozytorium powstało jako odpowiedź na prostą obserwację: dobre prompty, które piszę ad hoc
-w rozmowach z AI, znikają w historii czatu i za tydzień wymyślam je od nowa. Zamiast tego —
-katalogowanie, parametryzacja i wielokrotne użycie.
+This repository started from a simple observation: the good prompts I write ad hoc in conversations
+with AI tools disappear into chat history, and a week later I'm reinventing them from scratch.
+Instead — cataloging, parameterization, and reuse.
 
-## Dlaczego to repozytorium istnieje
+## Why this repository exists
 
-Nie chodziło mi o zebranie jak największej liczby "ciekawych promptów". Chodziło o zbudowanie
-**systemu**, w którym:
+The goal wasn't to collect as many "interesting prompts" as possible. The goal was to build a
+**system** where:
 
-- każdy prompt da się użyć wielokrotnie, w różnych sytuacjach, bez przepisywania od zera,
-- ktoś inny niż ja (nowy członek zespołu, przyszły ja za pół roku) rozumie prompt bez dopytywania o kontekst,
-- widać nie tylko *co* prompt robi, ale *dlaczego* jest skonstruowany akurat tak, a nie inaczej.
+- every prompt can be reused across different situations without rewriting it from zero,
+- someone other than me (a new team member, or future-me in six months) can understand a prompt
+  without asking for context,
+- it's visible not just *what* a prompt does, but *why* it's built the way it is.
 
-Pełne wyjaśnienie zasad projektowania znajduje się w [`docs/METODOLOGIA.md`](docs/METODOLOGIA.md).
+The full explanation of the design principles is in [`docs/METODOLOGIA.md`](docs/METODOLOGIA.md)
+(Polish — methodology document).
 
-## Struktura repozytorium
+## Repository structure
 
 ```
 prompt-knowledge-base/
-├── README.md                          — ten plik
+├── README.md                          — this file (English)
 ├── prompts/
-│   ├── praca/                         — 4 prompty do codziennej pracy
-│   ├── nauka/                         — 5 promptów do nauki i researchu
-│   ├── dokumentacja/                  — 3 prompty do pisania dokumentacji
-│   └── automatyzacja/                 — 3 prompty do analizy i budowy automatyzacji
+│   ├── praca/                         — 4 prompts for everyday work
+│   ├── nauka/                         — 5 prompts for learning and research
+│   ├── dokumentacja/                  — 3 prompts for writing documentation
+│   └── automatyzacja/                 — 3 prompts for analyzing and building automation
 ├── docs/
-│   ├── METODOLOGIA.md                 — zasady projektowania promptów (meta-poziom)
-│   └── PRZYGOTOWANIE_DO_ROZMOWY.md    — notatki własne, nieczęść "produktu"
-└── examples/                          — miejsce na dodatkowe materiały (zrzuty ekranu, dłuższe case studies)
+│   ├── METODOLOGIA.md                 — prompt design principles (meta-level)
+│   └── PRZYGOTOWANIE_DO_ROZMOWY.md    — personal notes, not part of the "product"
+│ examples/                          — space for extra material (screenshots, longer case studies)
+└──images/                              - obsidian_graph.png
 ```
 
-## Katalog promptów
+*Note: folder and file names are kept in Polish (praca = work, nauka = learning, dokumentacja =
+documentation, automatyzacja = automation) to match the original repository structure; prompt
+content is also in Polish.*
 
-### 💼 Praca
-| Prompt | Do czego służy |
+## Prompt catalog
+
+### 💼 Work
+| Prompt | What it's for |
 |---|---|
-| [Analiza danych z Excela przez AI](prompts/praca/analiza-danych-excel.md) | Wyciąganie wniosków biznesowych z arkusza danych — diagnoza jakości danych, propozycje cięć, formuły, wykresy |
-| [Code review pod konkretny cel](prompts/praca/code-review.md) | Recenzja kodu skupiona na jednym wymiarze (bezpieczeństwo / wydajność / czytelność) zamiast ogólnikowej |
-| [Podsumowanie notatek ze spotkania](prompts/praca/podsumowanie-notatek-ze-spotkania.md) | Chaotyczne notatki → decyzje, action items, otwarte kwestie, bez zmyślania faktów |
-| [Redagowanie e-maili z kontrolą tonu](prompts/praca/redagowanie-emaili.md) | Trudne/formalne maile w kontrolowanym, średnim rejestrze — z dwoma wariantami do wyboru |
+| [Analyzing Excel data with AI](prompts/praca/analiza-danych-excel.md) | Extracting business insights from a spreadsheet — data quality checks, cut proposals, formulas, charts |
+| [Code review for a specific goal](prompts/praca/code-review.md) | Code review focused on a single dimension (security / performance / readability) instead of a generic one |
+| [Meeting notes summary](prompts/praca/podsumowanie-notatek-ze-spotkania.md) | Turns messy notes into decisions, action items, and open questions — without inventing facts |
+| [Drafting emails with tone control](prompts/praca/redagowanie-emaili.md) | Difficult/formal emails in a controlled, middle register — with two variants to choose from |
 
-### 📚 Nauka
-| Prompt | Do czego służy |
+### 📚 Learning
+| Prompt | What it's for |
 |---|---|
-| [Wyjaśnienie koncepcji na 3 poziomach](prompts/nauka/wyjasnienie-koncepcji.md) | Nowe pojęcie wyjaśnione od analogii po poziom ekspercki, z pytaniem kontrolnym |
-| [Generowanie fiszek (spaced repetition)](prompts/nauka/tworzenie-fiszek.md) | Materiał źródłowy → fiszki gotowe do Anki, z naciskiem na pytania aplikacyjne, nie tylko definicje |
-| [Tutor sokratejski](prompts/nauka/tutor-sokratejski.md) | Nauka przez pytania naprowadzające — model celowo nie podaje gotowej odpowiedzi |
-| [Plan nauki pod cel i deadline](prompts/nauka/plan-nauki.md) | Priorytetyzacja materiału metodą Pareto zamiast uczenia się wszystkiego po kolei |
-| [Podsumowanie artykułu/dokumentacji](prompts/nauka/podsumowanie-artykulu.md) | Streszczenie pod kątem praktycznego zastosowania, z jawnymi ograniczeniami źródła |
+| [Explaining a concept at 3 levels](prompts/nauka/wyjasnienie-koncepcji.md) | A new concept explained from an analogy up to expert level, with a comprehension-check question |
+| [Generating flashcards (spaced repetition)](prompts/nauka/tworzenie-fiszek.md) | Source material → Anki-ready flashcards, emphasizing application questions, not just definitions |
+| [Socratic tutor](prompts/nauka/tutor-sokratejski.md) | Learning through guiding questions — the model deliberately withholds the direct answer |
+| [Learning plan for a goal and deadline](prompts/nauka/plan-nauki.md) | Prioritizing material with the Pareto method instead of studying everything sequentially |
+| [Summarizing an article/documentation](prompts/nauka/podsumowanie-artykulu.md) | A summary focused on practical application, with explicit source limitations |
 
-### 📄 Dokumentacja
-| Prompt | Do czego służy |
+### 📄 Documentation
+| Prompt | What it's for |
 |---|---|
-| [Dokumentacja techniczna projektu](prompts/dokumentacja/dokumentacja-techniczna.md) | Dokumentacja skupiona na "dlaczego tak", nie tylko "co robi kod" |
-| [Generator README.md](prompts/dokumentacja/generator-readme.md) | Ustandaryzowany proces tworzenia README pod portfolio/projekt zaliczeniowy |
-| [Dokumentacja API](prompts/dokumentacja/dokumentacja-api.md) | Spójna dokumentacja endpointów gotowa do Postman/Swaggera |
+| [Technical project documentation](prompts/dokumentacja/dokumentacja-techniczna.md) | Documentation focused on "why it was built this way," not just "what the code does" |
+| [README.md generator](prompts/dokumentacja/generator-readme.md) | A standardized process for writing a README for a portfolio/course project |
+| [API documentation](prompts/dokumentacja/dokumentacja-api.md) | Consistent endpoint documentation ready for Postman/Swagger |
 
-### ⚙️ Automatyzacja
-| Prompt | Do czego służy |
+### ⚙️ Automation
+| Prompt | What it's for |
 |---|---|
-| [Analiza procesu pod automatyzację](prompts/automatyzacja/analiza-procesu-do-automatyzacji.md) | Systematyczna ocena, którą część powtarzalnego procesu opłaca się zautomatyzować najpierw |
-| [Instrukcja → gotowy skrypt](prompts/automatyzacja/instrukcja-na-skrypt.md) | Zamiana spisanej procedury ręcznej na działający skrypt, z ukrytymi założeniami wyciągniętymi na wierzch |
-| [Projektowanie łańcucha promptów](prompts/automatyzacja/pipeline-promptow-chain.md) | Rozbicie złożonego zadania LLM na etapy z jednym typem wyjścia na etap, zamiast jednego dużego promptu |
+| [Process analysis for automation](prompts/automatyzacja/analiza-procesu-do-automatyzacji.md) | A systematic assessment of which part of a repetitive process is worth automating first |
+| [Instructions → working script](prompts/automatyzacja/instrukcja-na-skrypt.md) | Turning a written manual procedure into a working script, surfacing hidden assumptions |
+| [Designing a prompt chain](prompts/automatyzacja/pipeline-promptow-chain.md) | Breaking a complex LLM task into stages with one output type per stage, instead of one large prompt |
 
-## Jak korzystać z tej bazy
+## How to use this base
 
-1. Znajdź prompt pasujący do sytuacji w tabeli powyżej.
-2. Skopiuj treść z sekcji **Prompt** danego pliku.
-3. Podstaw wartości pod zmienne oznaczone `{tak}` — każdy plik wymienia je w sekcji **Zmienne do dostosowania**.
-4. Sprawdź sekcję **Wskazówki** — zawiera uwagi, które realnie wpływają na jakość odpowiedzi.
+1. Find the prompt that matches your situation in the table above.
+2. Copy the content from the **Prompt** section of that file.
+3. Fill in the variables marked `{like_this}` — each file lists them under **Zmienne do
+   dostosowania** (Variables to customize).
+4. Check the **Wskazówki** (Tips) section — it contains notes that genuinely affect answer quality.
 
-Każdy prompt jest samodzielnym plikiem markdown — można go łatwo przenieść do dowolnego narzędzia
-(Notion, wewnętrzna wiki, inny model AI) bez zależności od reszty repozytorium.
+Each prompt is a standalone markdown file — it can easily be moved to any other tool (Notion, an
+internal wiki, a different AI model) without depending on the rest of the repository.
 
-## Zasady, którymi się kierowałem (skrót)
+## Principles behind the design (summary)
 
-- **Jeden cel na prompt** — zamiast uniwersalnego "zrób wszystko", każdy prompt ma wąsko zdefiniowane zadanie.
-- **Sparametryzowane wejście** — zmienne zamiast promptu "na sztywno", żeby dało się go użyć wielokrotnie.
-- **Jawne ograniczenia tam, gdzie halucynacja jest kosztowna** (np. zakaz zmyślania terminów w podsumowaniu spotkania).
-- **Sprawdzony przykład przy każdym prompcie** — żaden prompt nie trafił tu bez realnego testu.
-- **Linkowanie między promptami** — baza jest grafem powiązanych narzędzi, nie płaską listą.
+- **One goal per prompt** — instead of a universal "do everything," each prompt has a narrowly
+  defined task.
+- **Parameterized input** — variables instead of a hardcoded prompt, so it can be reused.
+- **Explicit constraints wherever a hallucination would be costly** (e.g., a ban on inventing
+  deadlines in a meeting summary).
+- **A tested example for every prompt** — no prompt was added without a real test run.
+- **Cross-linking between prompts** — the base is a graph of related tools, not a flat list.
 
-Pełne, szczegółowe wyjaśnienie każdej z tych zasad wraz z uzasadnieniem: [`docs/METODOLOGIA.md`](docs/METODOLOGIA.md).
+The full, detailed explanation of each of these principles, with reasoning:
+[`docs/METODOLOGIA.md`](docs/METODOLOGIA.md).
 
-## Automatyzacja w praktyce (n8n)
+## Obsidian version
 
-Jeden z promptów — [`dokumentacja-api.md`](prompts/dokumentacja/dokumentacja-api.md) — nie został
-tylko opisany, ale realnie wdrożony jako automatyzacja: workflow n8n generujący dokumentację API
-automatycznie po każdym pushu do repozytorium, z walidacją wyniku i zatwierdzeniem przez człowieka
-przed mergem. Pełny opis decyzji projektowych i gotowy do importu plik workflow:
-[`examples/n8n-automatyzacja-dokumentacji-api.md`](examples/n8n-automatyzacja-dokumentacji-api.md).
+The repository doubles as a ready-to-use Obsidian vault — the `[[wikilinks]]` in each prompt's
+"Powiązane prompty" (Related prompts) section automatically build a visual graph of connections.
+Starting point after opening the folder as a vault:
+[`Indeks - Baza Promptów.md`](Indeks%20-%20Baza%20Promptów.md).
 
-## Wersja dla Obsidiana
+## Status and further development
 
-Repozytorium jest jednocześnie gotowym vaultem Obsidiana — linki `[[tak]]` w sekcjach "Powiązane
-prompty" tworzą wizualny graf połączeń między promptami. Punkt startowy po otwarciu folderu jako
-vault: [`Indeks - Baza Promptów.md`](Indeks%20-%20Baza%20Promptów.md).
-
-## Status i dalszy rozwój
-
-Baza jest żywym dokumentem — nowy prompt trafia tutaj, gdy zauważam, że po raz trzeci formułuję
-to samo zapytanie do AI od nowa. Planowane rozszerzenia: dodanie realnych zrzutów ekranu z działania
-wybranych promptów w `examples/`, oraz prompty specyficzne dla narzędzi używanych w konkretnym
-środowisku pracy.
+This is a living knowledge base — a new prompt gets added here whenever I notice I'm formulating
+the same request to an AI tool for the third time. Planned extensions: adding real screenshots of
+selected prompts in action under `examples/`, and prompts specific to the tools used in a
+particular work environment.
 
 ---
-*Repozytorium prowadzone jako osobista baza wiedzy — swobodnie fork'uj i dostosuj pod własne potrzeby.*
+*Maintained as a personal knowledge base — feel free to fork and adapt it to your own needs.*
